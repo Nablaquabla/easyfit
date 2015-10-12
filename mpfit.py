@@ -404,7 +404,8 @@ Perform Levenberg-Marquardt least-squares minimization, based on MINPACK-1.
 import numpy
 import types
 
-
+
+
 #     Original FORTRAN documentation
 #     **********
 #
@@ -586,7 +587,7 @@ import types
 #     burton s. garbow, kenneth e. hillstrom, jorge j. more
 #
 #     **********
-
+
 class mpfit:
    def __init__(self, fcn, xall=None, functkw={}, parinfo=None,
                 ftol=1.e-10, xtol=1.e-10, gtol=1.e-10,
@@ -864,12 +865,12 @@ Keywords:
          return
 
       ## Parameters can either be stored in parinfo, or x. x takes precedence if it exists
-      if (xall == None) and (parinfo == None):
+      if (xall is None) and (parinfo is None):
          self.errmsg = 'ERROR: must pass parameters in P or PARINFO'
          return
 
       ## Be sure that PARINFO is of the right type
-      if (parinfo != None):
+      if (parinfo is not None):
          if (type(parinfo) != types.ListType):
             self.errmsg = 'ERROR: PARINFO must be a list of dictionaries.'
             return
@@ -877,15 +878,15 @@ Keywords:
             if (type(parinfo[0]) != types.DictionaryType):
               self.errmsg = 'ERROR: PARINFO must be a list of dictionaries.'
               return
-         if ((xall != None) and (len(xall) != len(parinfo))):
+         if ((xall is not None) and (len(xall) != len(parinfo))):
             self.errmsg = 'ERROR: number of elements in PARINFO and P must agree'
             return
 
       ## If the parameters were not specified at the command line, then
       ## extract them from PARINFO
-      if (xall == None):
+      if (xall is None):
          xall = self.parinfo(parinfo, 'value')
-         if (xall == None):
+         if (xall is None):
             self.errmsg = 'ERROR: either P or PARINFO(*)["value"] must be supplied.'
             return
 
@@ -942,7 +943,7 @@ Keywords:
       ## LIMITED parameters ?
       limited = self.parinfo(parinfo, 'limited', default=[0,0])
       limits = self.parinfo(parinfo, 'limits', default=[0.,0.])
-      if (limited != None) and (limits != None):
+      if (limited is not None) and (limits is not None):
          ## Error checking on limits in parinfo
          wh, = numpy.nonzero((limited[:,0] & (xall < limits[:,0])) |
                               (limited[:,1] & (xall > limits[:,1])))
@@ -1017,7 +1018,7 @@ Keywords:
          numpy.put(self.params, ifree, x)
          if (self.qanytied): self.params = self.tie(self.params, ptied)
 
-         if (nprint > 0) and (iterfunct != None):
+         if (nprint > 0) and (iterfunct is not None):
             if (((self.niter-1) % nprint) == 0):
                mperr = 0
                xnew0 = self.params.copy()
@@ -1026,7 +1027,7 @@ Keywords:
                status = iterfunct(fcn, self.params, self.niter, self.fnorm**2, 
                   functkw=functkw, parinfo=parinfo, quiet=quiet, 
                   dof=dof, **iterkw)
-               if (status != None): self.status = status
+               if (status is not None): self.status = status
 
                ## Check for user termination
                if (self.status < 0):  
@@ -1046,7 +1047,7 @@ Keywords:
                        epsfcn=epsfcn, 
                        autoderivative=autoderivative, dstep=dstep, 
                        functkw=functkw, ifree=ifree, xall=self.params)
-         if (fjac == None):
+         if (fjac is None):
             self.errmsg = 'WARNING: premature termination by FDJAC2'
             return
 
@@ -1302,15 +1303,15 @@ Keywords:
          catch_msg = 'in the termination phase'
          self.fnorm = self.enorm(fvec)
 
-      if ((self.fnorm != None) and (fnorm1 != None)):
+      if ((self.fnorm is not None) and (fnorm1 is not None)):
          self.fnorm = max([self.fnorm, fnorm1])
          self.fnorm = self.fnorm**2.
 
       self.covar = None
       self.perror = None
       ## (very carefully) set the covariance matrix COVAR
-      if ((self.status > 0) and (nocovar==0) and (n != None)
-                     and (fjac != None) and (ipvt != None)):
+      if ((self.status > 0) and (nocovar==0) and (n is not None)
+                     and (fjac is not None) and (ipvt is not None)):
          sz = numpy.shape(fjac)
          if ((n > 0) and (sz[0] >= n) and (sz[1] >= n)
              and (len(ipvt) >= n)):
@@ -1335,7 +1336,6 @@ Keywords:
               numpy.put(self.perror, wh, numpy.sqrt(numpy.take(d, wh)))
       return
 
-
    ## Default procedure to be called every iteration.  It simply prints
    ## the parameter values.
    def defiter(self, fcn, x, iter, fnorm=None, functkw=None, 
@@ -1344,7 +1344,7 @@ Keywords:
 
       if (self.debug): print 'Entering defiter...'
       if (quiet): return
-      if (fnorm == None):
+      if (fnorm is None):
          [status, fvec] = self.call(fcn, x, functkw)
          fnorm = self.enorm(fvec)**2
 
@@ -1352,11 +1352,11 @@ Keywords:
       nprint = len(x)
       print "Iter ", ('%6i' % iter),"   CHI-SQUARE = ",('%.10g' % fnorm)," DOF = ", ('%i' % dof)
       for i in range(nprint):
-         if (parinfo != None) and (parinfo[i].has_key('parname')):
+         if (parinfo is not None) and (parinfo[i].has_key('parname')):
             p = '   ' + parinfo[i]['parname'] + ' = '
          else:
             p = '   P' + str(i) + ' = '
-         if (parinfo != None) and (parinfo[i].has_key('mpprint')):
+         if (parinfo is not None) and (parinfo[i].has_key('mpprint')):
             iprint = parinfo[i]['mpprint']
          else:
             iprint = 1
@@ -1380,18 +1380,17 @@ Keywords:
    ##      endif
    ##  endif
 
-
    ## Procedure to parse the parameter values in PARINFO, which is a list of dictionaries
    def parinfo(self, parinfo=None, key='a', default=None, n=0):
       if (self.debug): print 'Entering parinfo...'
-      if (n == 0) and (parinfo != None): n = len(parinfo)
+      if (n == 0) and (parinfo is not None): n = len(parinfo)
       if (n == 0):
          values = default
          return(values)
 
       values = []
       for i in range(n):
-         if ((parinfo != None) and (parinfo[i].has_key(key))):
+         if ((parinfo is not None) and (parinfo[i].has_key(key))):
            values.append(parinfo[i][key])
          else:
            values.append(default)
@@ -1405,14 +1404,13 @@ Keywords:
          values = numpy.asarray(values, numpy.float)
       return(values)
 
-
    ## Call user function or procedure, with _EXTRA or not, with
    ## derivatives or not.
    def call(self, fcn, x, functkw, fjac=None):
       if (self.debug): print 'Entering call...'
       if (self.qanytied): x = self.tie(x, self.ptied)
       self.nfev = self.nfev + 1
-      if (fjac == None):
+      if (fjac is None):
          [status, f] = fcn(x, fjac=fjac, **functkw)
          if (self.damp > 0):
             ## Apply the damping if requested.  This replaces the residuals
@@ -1423,7 +1421,6 @@ Keywords:
       else:
          return(fcn(x, fjac=fjac, **functkw))
 
-
    def enorm(self, vec):
 
         if (self.debug): print 'Entering enorm...'
@@ -1454,17 +1451,16 @@ Keywords:
 
         return(ans)
 
-
    def fdjac2(self, fcn, x, fvec, step=None, ulimited=None, ulimit=None, dside=None,
               epsfcn=None, autoderivative=1,
               functkw=None, xall=None, ifree=None, dstep=None):
 
       if (self.debug): print 'Entering fdjac2...'
       machep = self.machar.machep
-      if epsfcn == None:  epsfcn = machep
-      if xall == None:    xall = x
-      if ifree == None:   ifree = numpy.arange(len(xall))
-      if step == None:    step = x * 0.
+      if epsfcn is None:  epsfcn = machep
+      if xall is None:    xall = x
+      if ifree is None:   ifree = numpy.arange(len(xall))
+      if step is None:    step = x * 0.
       nall = len(xall)
 
       eps = numpy.sqrt(max([epsfcn, machep]))
@@ -1499,7 +1495,7 @@ Keywords:
       h = eps * abs(x)
 
       ## if STEP is given, use that
-      if step != None:
+      if step is not None:
          stepi = numpy.take(step, ifree)
          wh, = numpy.nonzero(stepi > 0)
          if (len(wh) > 0): numpy.put(h, wh, numpy.take(stepi, wh))
@@ -1545,8 +1541,6 @@ Keywords:
             fjac[0:,j] = (fp-fm)/(2*h[j])
       return(fjac)
 
-
-
    #     Original FORTRAN documentation
    #     **********
    #
@@ -1668,7 +1662,6 @@ Keywords:
    #
    # Note that it is usually never necessary to form the Q matrix
    # explicitly, and MPFIT does not.
-   
 
    def qrfac(self, a, pivot=0):
 
@@ -1744,7 +1737,6 @@ Keywords:
          rdiag[j] = -ajnorm
       return([a, ipvt, rdiag, acnorm])
 
-   
    #     Original FORTRAN documentation
    #     **********
    #
@@ -1822,7 +1814,7 @@ Keywords:
    #     argonne national laboratory. minpack project. march 1980.
    #     burton s. garbow, kenneth e. hillstrom, jorge j. more
    #
-   
+
    def qrsolv(self, r, ipvt, diag, qtb, sdiag):
       if (self.debug): print 'Entering qrsolv...'
       sz = numpy.shape(r)
@@ -1891,13 +1883,10 @@ Keywords:
             wa[j] = (wa[j]-sum)/sdiag[j]
 
       ## Permute the components of z back to components of x
-      print "wa = ",wa, ipvt
+#      print "wa = ",wa, ipvt
       numpy.put(x, ipvt, wa)
       return(r, x, sdiag)
-
-
-
-   
+      
    #     Original FORTRAN documentation
    #
    #     subroutine lmpar
@@ -1991,7 +1980,7 @@ Keywords:
    #     argonne national laboratory. minpack project. march 1980.
    #     burton s. garbow, kenneth e. hillstrom, jorge j. more
    #
-   
+      
    def lmpar(self, r, ipvt, diag, qtb, delta, x, sdiag, par=None):
 
       if (self.debug): print 'Entering lmpar...'
@@ -2098,18 +2087,16 @@ Keywords:
       ## Termination
       return[r, par, x, sdiag]
 
-   
    ## Procedure to tie one parameter to another.
    def tie(self, p, ptied=None):
       if (self.debug): print 'Entering tie...'
-      if (ptied == None): return
+      if (ptied is None): return
       for i in range(len(ptied)):
          if ptied[i] == '': continue
          cmd = 'p[' + str(i) + '] = ' + ptied[i]
          exec(cmd)
       return(p)
 
-   
    #     Original FORTRAN documentation
    #     **********
    #
@@ -2176,7 +2163,7 @@ Keywords:
    #     burton s. garbow, kenneth e. hillstrom, jorge j. more
    #
    #     **********
-   
+
    def calc_covar(self, rr, ipvt=None, tol=1.e-14):
 
       if (self.debug): print 'Entering calc_covar...'
@@ -2189,7 +2176,7 @@ Keywords:
          print 'ERROR: r must be a square matrix'
          return(-1)
 
-      if (ipvt == None): ipvt = numpy.arange(n)
+      if (ipvt is None): ipvt = numpy.arange(n)
       r = rr.copy()
       r.shape = [n,n]
 

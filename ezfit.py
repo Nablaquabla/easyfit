@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 '''====
-EZ-Fit Version 0.1
+EZ-Fit
 ====
 
 Provides an easy to use wrapper to fit common functions to a data set using the
@@ -21,15 +21,15 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details: http://www.gnu.org/licenses.
 -------------------------------------------------------------------------------
 '''
+
 import numpy as np
 from mpfit import mpfit
-import emcee
 import warnings
 
-class __version__:
+def __version__():
     print 'EZ-Fit 0.1'
+    return
 
-    
 def const(x,p):
     '''Parameter: constant\n
     Return
@@ -242,9 +242,9 @@ def fit(typ='line',x='None', y='None', yerr='None',p0='None'):
     elif 'poly' in typ:
         n = int(typ[4:])
         typ = 'poly'
-    if x=='None': x = np.arange(len(y))
-    if yerr=='None': yerr = np.ones(len(y))
-    if p0 =='None':
+    if x is 'None': x = np.arange(len(y))
+    if yerr is 'None': yerr = np.ones(len(y))
+    if p0 is 'None':
         if typ == 'const': p0 = [0]
         elif typ == 'line':  p0 = [1,0]
         elif typ == 'line0': p0 = [1]
@@ -380,14 +380,14 @@ def arbFit(fct=line,x='None', y='None', yerr='None',p0='None'):
     #=========================================================================#
     #                   Filter Future Warning From Numpy
     #=========================================================================#
-    warnings.filterwarnings("ignore",category=FutureWarning)
+#    warnings.filterwarnings("ignore",category=FutureWarning)
     
     #=========================================================================#
     #                           Set default arrays
     #=========================================================================#
-    if x=='None': x = np.arange(len(y))
-    if yerr=='None': yerr = np.ones(len(y))
-    if p0 == 'None': 
+    if x is 'None': x = np.arange(len(y))
+    if yerr is 'None': yerr = np.ones(len(y))
+    if p0 is  'None': 
         p0 = np.ones(100)
             
     #=========================================================================#
