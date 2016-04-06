@@ -290,7 +290,7 @@ def fit(typ='line',x='None', y='None', yerr='None',p0='None'):
     #  Initialize fit info dictionary and try to fit function to data
     #=========================================================================#    
     parbase = {'value':0,'fixed':0,'limited':[0,0],'limits':[0.,0.]}
-    parinfo = [parbase]*len(p0)
+    parinfo = [{k:v for k,v in parbase.items()} for x in range(len(p0))]
     for i in range(len(p0)):
         parinfo[i]['value'] = p0[i]
     fa = {'x': x, 'y': y, 'err': yerr}
@@ -410,7 +410,7 @@ def arbFit(fct=line,x='None', y='None', yerr='None',p0='None'):
     #  Initialize fit info dictionary and try to fit function to data
     #=========================================================================#    
     parbase = {'value':0,'fixed':0,'limited':[0,0],'limits':[0.,0.]}
-    parinfo = [parbase]*len(p0)
+    parinfo = [{k:v for k,v in parbase.items()} for x in range(len(p0))]
     for i in range(len(p0)):
         parinfo[i]['value'] = p0[i]
     fa = {'x': x, 'y': y, 'err': yerr}
