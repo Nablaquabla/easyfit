@@ -244,6 +244,10 @@ def fit(typ='line',x='None', y='None', yerr='None',p0='None'):
         typ = 'poly'
     if x is 'None': x = np.arange(len(y))
     if yerr is 'None': yerr = np.ones(len(y))
+    elif yerr is 'Poisson':
+        _ty = np.copy(y)
+        _ty[_ty <= 0] = 1
+        yerr = np.sqrt(_ty)
     if p0 is 'None':
         if typ == 'const': p0 = [0]
         elif typ == 'line':  p0 = [1,0]
@@ -387,6 +391,10 @@ def arbFit(fct=line,x='None', y='None', yerr='None',p0='None'):
     #=========================================================================#
     if x is 'None': x = np.arange(len(y))
     if yerr is 'None': yerr = np.ones(len(y))
+    elif yerr is 'Poisson':
+        _ty = np.copy(y)
+        _ty[_ty <= 0] = 1
+        yerr = np.sqrt(_ty)
     if p0 is  'None': 
         p0 = np.ones(100)
             
