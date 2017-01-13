@@ -27,7 +27,7 @@ from mpfit import mpfit
 import warnings
 
 def __version__():
-    print 'EZ-Fit 0.1'
+    print 'Easy-Fit 0.2'
     return
 
 def const(x,p):
@@ -315,7 +315,7 @@ def fit(typ='line',x='None', y='None', yerr='None',p0='None'):
     return x2,par,xfit,yfit
     
     
-def arbFit(fct=line,x='None', y='None', yerr='None',p0='None'):
+def arbFit(fct=line,x='None', y='None', yerr='None',p0='None',limits='None'):
     '''
     Takes the data and performs a least square fit of the specified type.
     
@@ -421,6 +421,10 @@ def arbFit(fct=line,x='None', y='None', yerr='None',p0='None'):
     parinfo = [{k:v for k,v in parbase.items()} for _ti in range(len(p0))]
     for i in range(len(p0)):
         parinfo[i]['value'] = p0[i]
+    if limits != 'None':
+        for i in range(len(limits)):
+            parinfo[int(limits[i][0])]['limited'] = limits[i][1:3]
+            parinfo[int(limits[i][0])]['limits'] = limits[i][3:]
     fa = {'x': x, 'y': y, 'err': yerr}
     m = mpfit(fitfunc, p0, parinfo=parinfo, functkw=fa,quiet=1)
     dof = len(x) - len(m.params)
